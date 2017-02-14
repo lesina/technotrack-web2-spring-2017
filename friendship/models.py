@@ -11,3 +11,7 @@ class Friendship(models.Model):
 class Friends(models.Model):
     first = models.ForeignKey(User, blank=False, related_name='first')
     second = models.ForeignKey(User, blank=False, related_name='second')
+
+    class Meta:
+        verbose_name = u'Friends'
+        verbose_name_plural = u'Friends'

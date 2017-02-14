@@ -14,8 +14,8 @@ class User(AbstractUser):
     avatar = models.ImageField(u'фото', blank=True, upload_to='avatars')
 
     class Meta:
-        verbose_name = u'пользователь'
-        verbose_name_plural = u'пользователи'
+        verbose_name = u'User'
+        verbose_name_plural = u'Users'
 
 
 class Dated(models.Model):
