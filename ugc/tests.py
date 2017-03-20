@@ -1,3 +1,2 @@
 from django.test import TestCase
-
-# Create your tests here.
+from core.models import User

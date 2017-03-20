@@ -18,7 +18,7 @@ from configparser import ConfigParser
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 config = ConfigParser()
-config.read(os.path.join(BASE_DIR, '../django.conf'))
+config.read(os.path.join(os.path.dirname(BASE_DIR), 'django.conf'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
@@ -29,7 +29,7 @@ SECRET_KEY = config.get('main', 'SECRET')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [u'project', u'localhost']
 
 
 # Application definition
@@ -41,13 +41,34 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    #'rest_framework.authtoken',
+    'social_django',
+    #'social.apps.django_app.default',
     'debug_toolbar',
     'core.apps.CoreConfig',
-    'like',
-    'chat',
-    'friendship',
-    'ugc',
+    'like.apps.LikeConfig',
+    'chat.apps.ChatConfig',
+    'friendship.apps.FriendshipConfig',
+    'ugc.apps.UgcConfig',
+    'feed.apps.FeedConfig',
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.vk.VKOAuth2',
+    'social_core.backends.open_id.OpenIdAuth',
+    'social_core.backends.facebook.FacebookOAuth2',
+    'social_core.backends.google.GoogleOpenId',
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.google.GoogleOAuth',
+    'social_core.backends.twitter.TwitterOAuth',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_VK_OAUTH2_KEY = config.get('VKoauth', 'KEY')
+SOCIAL_AUTH_VK_OAUTH2_SECRET = config.get('VKoauth', 'SECRET')
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email', 'status']
+SOCIAL_AUTH_VK_APP_USER_MODE = 2
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -77,6 +98,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -95,6 +118,11 @@ DATABASES = {
         'USER': config.get('db', 'USER'),
         'PASSWORD': config.get('db', 'PASSWORD'),
         'HOST': 'localhost',
+        'OPTIONS': {
+                    'init_command': 'SET character_set_connection=utf8,collation_connection=utf8_unicode_ci',
+                    'charset': 'utf8',
+                    'use_unicode': True,
+                    },
     }
 }
 
@@ -131,6 +159,30 @@ USE_L10N = True
 
 USE_TZ = True
 
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        #'rest_framework.authentication.BasicAuthentication',
+        #'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
+
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.social_auth.associate_by_email',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
