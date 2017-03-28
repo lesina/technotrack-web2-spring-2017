@@ -17,43 +17,8 @@ class PostComponent extends Component {
     title: '',
   }
 
-  componentDidMount() {
-    fetch(this.props.content_object,
-      {
-        method: 'GET',
-        credentials: 'same-origin',
-      })
-    .then(promise => promise.json())
-    .then((json) => {
-      this.setState({
-        content: json.content,
-      });
-    });
-
-    fetch(this.props.author,
-      {
-        method: 'GET',
-        credentials: 'same-origin',
-      })
-    .then(promise => promise.json())
-    .then((json) => {
-      console.log(json);
-      this.setState({
-        user: json,
-      });
-    });
-  }
-
   render() {
-    return (
-      <Row>
-        <Panel/* header=<div><Avatar src="../static/ava.png" size={30} /> {this.props.title}</div>
-          footer={this.props.date}
-          bsStyle="info"*/>
-          {this.state.content}
-        </Panel>
-      </Row>
-    );
+    return <div></div>;
   }
 }
 

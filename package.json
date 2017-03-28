@@ -4,8 +4,7 @@
   "description": "Technotrack web2 project spring 2017",
   "main": "index.jsx",
   "scripts": {
-    "start": "webpack",
-    "build": "NODE_ENV=development webpack"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "babel": {
     "plugins": [
@@ -89,9 +88,6 @@
     "webpack-clean-obsolete-chunks": "^0.1.4",
     "webpack-dev-server": "^2.4.2",
     "webpack-split-by-path": "^2.0.0"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
