@@ -36,6 +36,7 @@ class EventAble(Authored, Dated):
 
 
 class Achieve(Named, Attached, EventAble):
+    event = GenericRelation(Event)
 
     def get_description(self):
         return u'{} получил достижение {}'.format(self.content_object.get_author().username, self.title)

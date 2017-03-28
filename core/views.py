@@ -23,4 +23,4 @@ class UserProfileView(DetailView):
 
 
 def home(request):
-    return render(request, template_name='core/vkhome.html')
+    return render(request, template_name='core/index.html')

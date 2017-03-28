@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 from django.db import models
 from core.models import User
 from ugc.models import EventAble
+from django.contrib.contenttypes.fields import GenericRelation
+from feed.models import Event
 
 
 class FriendshipRequest(models.Model):
@@ -26,6 +28,7 @@ class FriendshipRequest(models.Model):
 
 class Friendship(EventAble):
     friend = models.ForeignKey(User, blank=False, related_name='friends')
+    event = GenericRelation(Event)
 
     def __str__(self):
         return u'{} -> {}'.format(self.author.username, self.friend.username)

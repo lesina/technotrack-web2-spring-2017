@@ -16,6 +16,7 @@ from configparser import ConfigParser
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_DIR = os.path.dirname(BASE_DIR)
 
 config = ConfigParser()
 config.read(os.path.join(os.path.dirname(BASE_DIR), 'django.conf'))
@@ -42,9 +43,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    #'rest_framework.authtoken',
+    'rest_framework.authtoken',
     'social_django',
-    #'social.apps.django_app.default',
+    'social.apps.django_app.default',
+    'webpack_loader',
+    'generic_relations',
+    'widget_tweaks',
     'debug_toolbar',
     'core.apps.CoreConfig',
     'like.apps.LikeConfig',
@@ -188,3 +192,23 @@ SOCIAL_AUTH_PIPELINE = (
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(PROJECT_DIR, 'collected_static/')
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'), )
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media/')
+
+
+LOGIN_REDIRECT_URL = "/"
+LOGIN_URL = "core:login"
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'CACHE': not DEBUG,
+        'BUNDLE_DIR_NAME': '../static/',                                  # must end with slash
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack/webpack-stats.json'),
+        'POLL_INTERVAL': 0.1,
+        'TIMEOUT': None,
+        'IGNORE': ['.+\.hot-update.js', '.+\.map']
+    }
+}

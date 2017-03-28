@@ -10,12 +10,12 @@ from application.settings import AUTH_USER_MODEL
 
 
 class MessageSerializer(serializers.HyperlinkedModelSerializer):
-    # author = serializers.HiddenField(default='author.id')
+    author = serializers.HiddenField(default='author.id')
     # chat = ChatSerializer()
     # author = serializers.ReadOnlyField()
 
     def validate(self, data):
-        if UserChat.objects.filter(Q(user=data['author']) & Q(chat=data['chat'])).exists():
+        if UserChat.objects.filter(Q(user=self.context['request'].user) & Q(chat=data['chat'])).exists():
             return data
         else:
             raise serializers.ValidationError("Not in chat")
@@ -85,10 +85,12 @@ class MessageViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
     def get_queryset(self):
-        q = super(MessageViewSet, self).get_queryset()
-        #username = self.request.query_params.get('username')
-        q = q.filter(chat__chats__user__username=self.request.user)
-        return q
+        chat_id = self.request.query_params.get('chat')
+        if chat_id:
+            query = Q(chat__chats__user=self.request.user) & Q(chat__id=chat_id)
+        else:
+            query = Q(chat__chats__user=self.request.user)
+        return self.queryset.filter(query)
 
 router.register('chats', ChatViewSet)
 router.register('userchats', UserChatViewSet)
