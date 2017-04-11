@@ -1,5 +1,5 @@
 
-from rest_framework import serializers, viewsets, permissions,fields
+from rest_framework import serializers, viewsets, permissions
 from .models import Event, Achieve
 from application.api import router
 from django.db.models import Q
@@ -22,12 +22,11 @@ class ReadOnly(permissions.BasePermission):
 
 class EventSerializer(serializers.HyperlinkedModelSerializer):
     content_object = GenericRelatedField({
-        Achieve: AchieveSerializer(read_only=True, allow_null=True),
-        Friendship: FriendshipSerializer(read_only=True, allow_null=True),
-        Post: PostSerializer(read_only=True),
+        Achieve: serializers.HyperlinkedRelatedField(view_name='achieve-detail', read_only=True),
+        Friendship: serializers.HyperlinkedRelatedField(view_name='friendship-detail', read_only=True),
+        Post: serializers.HyperlinkedRelatedField(read_only=True, view_name='post-detail'),
     })
     created = serializers.DateTimeField(read_only=True, format='%X %d %b %Y')
-    author = UserSerializer()
 
     class Meta:
         model = Event
@@ -44,32 +43,13 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
         q = self.queryset
         q = q.filter(Q(author=self.request.user) | Q(author__friendship__friend=self.request.user)) \
             .distinct().order_by('-created')
-        return q
-
-
-class UserEventViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Event.objects.all()
-    serializer_class = EventSerializer
-    permission_classes = (permissions.IsAuthenticated, ReadOnly)
-
-    def get_queryset(self):
-        q = self.queryset.order_by('-created').prefetch_related('author', 'content_object')
-        username = self.request.query_params.get('username')
-        if username and username != self.request.user.username:
-            q = q.filter(Q(author__username=username) & Q(author__friendship__friend=self.request.user))
-            return q
-        return q.filter(author=self.request.user)
+        return q.prefetch_related('author', 'content_object')
 
 
 class AchieveSerializer(viewsets.ModelViewSet):
-    content = fields.SerializerMethodField('__null__')
-
     class Meta:
         model = Achieve
-        fields = ('title', 'content')
-
-    def __null__(self, obj):
-        return None
+        fields = ('title', )
 
 
 class AchieveViewSet(viewsets.ReadOnlyModelViewSet):
@@ -93,4 +73,3 @@ class AchieveViewSet(viewsets.ReadOnlyModelViewSet):
 
 router.register('events', EventViewSet)
 router.register('achieve', AchieveViewSet)
-#router.register('userevents', UserEventViewSet)

@@ -71,7 +71,7 @@ class ChatViewSet(viewsets.ModelViewSet):
             # q = q.filter(author__username=self.request.query_params.get('username'))
             q = q.filter(chats__user__username=username)
             # print(q)
-        return q
+        return q.prefetch_related('author')
 
 
 class UserChatViewSet(viewsets.ModelViewSet):

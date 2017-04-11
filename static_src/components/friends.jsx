@@ -1,56 +1,79 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import CircularProgress from 'material-ui/CircularProgress';
-import FriendComponent from './friend';
+import { loadFriends, loadFriendsSuccess, loadFriendsFail } from '../actions/friendship';
+import { FRIENDSHIPS, FRIENDSHIP_REQUESTS, FRIENDSHIP_WAITINGS } from './friend';
 
-const FRIENDS = [
-  { id: 1, username: 'AAAA', first_name: 'FN', last_name: 'LN', avatar: '/' },
-  { id: 2, username: 'AAAA', first_name: 'FN', last_name: 'LN', avatar: '/' },
-  { id: 3, username: 'AAAA', first_name: 'FN', last_name: 'LN', avatar: '/' },
-  { id: 4, username: 'AAAA', first_name: 'FN', last_name: 'LN', avatar: '/' },
-  { id: 5, username: 'AAAA', first_name: 'FN', last_name: 'LN', avatar: '/' },
-  { id: 6, username: 'AAAA', first_name: 'FN', last_name: 'LN', avatar: '/' },
-  { id: 7, username: 'AAAA', first_name: 'FN', last_name: 'LN', avatar: '/' },
-  { id: 8, username: 'AAAA', first_name: 'FN', last_name: 'LN', avatar: '/' },
-];
-
-export default class FriendsComponent extends Component {
-
-  state = {
-    friendsList: [],
-    isLoading: true,
-  };
+class FriendsComponent extends Component {
 
   componentDidMount() {
-    const friends = FRIENDS.map(
-          friend => <FriendComponent
-            key={friend.id}
-            username={friend.username}
-            first_name={friend.first_name}
-            last_name={friend.last_name}
-            bsStyle=""
-          />,
-        );
-    this.setState({
-      friendsList: friends,
-      isLoading: false,
-    });
+    this.props.loadFriends();
+    fetch(this.url,
+      {
+        method: 'GET',
+        credentials: 'same-origin',
+      })
+      .then(promise => promise.json())
+      .then((json) => {
+        this.props.loadFriendsSuccess(json.map(rec => rec[this.field]), this.props.type);
+      });
   }
 
+  url = '';
+  field = '';
+
   render() {
+    let listProps;
+    switch (this.props.type) {
+      case FRIENDSHIPS:
+        this.url = '/api/friendship/';
+        listProps = this.props.friendsList;
+        this.field = 'friend';
+        break;
+      case FRIENDSHIP_REQUESTS:
+        this.url = '/api/friendshiprequests/?format=json&status=requested';
+        listProps = this.props.friendshipRequestList;
+        this.field = 'initiator';
+        break;
+      case FRIENDSHIP_WAITINGS:
+        this.url = '/api/friendshiprequests/?format=json&status=waiting';
+        listProps = this.props.friendshipWaitList;
+        this.field = 'recipient';
+        break;
+      default:
+    }
+
     return (
-      <div> { this.state.isLoading ?
-        <CircularProgress size={60} thickness={7} /> : this.state.friendsList
+      <div> { this.props.isLoading ?
+        <CircularProgress size={60} thickness={7} /> : listProps
       }
       </div>
     );
   }
 }
 
-FriendsComponent.defaultProps = {
-  isLoading: true,
+FriendsComponent.propTypes = {
+  type: PropTypes.string.isRequired,
 };
 
-FriendsComponent.propTypes = {
-  // friendsList: React.PropTypes.arrayOf(React.PropTypes.element).isRequired,
-  isLoading: React.PropTypes.bool,
-};
+const mapStateToProps = state => ({
+  isLoading: state.friendship.isLoading,
+  friendsList: state.friendship.friendsList,
+  friendshipRequestList: state.friendship.friendshipRequestList,
+  friendshipWaitList: state.friendship.friendshipWaitList,
+});
+
+const mapDispatchToProps = distpatch => ({
+  ...bindActionCreators({
+    loadFriends,
+    loadFriendsSuccess,
+    loadFriendsFail,
+  }, distpatch),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(FriendsComponent);
