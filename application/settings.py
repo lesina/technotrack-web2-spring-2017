@@ -198,15 +198,15 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'), )
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media/')
 
-
-LOGIN_REDIRECT_URL = "/"
-LOGIN_URL = "core:login"
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = 'core:login'
 
 WEBPACK_LOADER = {
     'DEFAULT': {
         'CACHE': not DEBUG,
-        'BUNDLE_DIR_NAME': '../static/',                                  # must end with slash
-        'STATS_FILE': os.path.join(BASE_DIR, 'webpack/webpack-stats.json'),
+        'BUNDLE_DIR_NAME': '../static/build/',                                  # must end with slash
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
         'POLL_INTERVAL': 0.1,
         'TIMEOUT': None,
         'IGNORE': ['.+\.hot-update.js', '.+\.map']

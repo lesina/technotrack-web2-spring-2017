@@ -62,6 +62,7 @@
     "imports-loader": "^0.7.1",
     "install": "^0.8.7",
     "jquery": "^3.2.1",
+    "jscs": "^3.0.7",
     "less": "^2.7.2",
     "less-loader": "^4.0.2",
     "no-op": "^1.0.3",
@@ -87,7 +88,8 @@
     "webpack-bundle-tracker": "^0.2.0",
     "webpack-clean-obsolete-chunks": "^0.1.4",
     "webpack-dev-server": "^2.4.2",
-    "webpack-split-by-path": "^2.0.0"
+    "webpack-split-by-path": "^2.0.0",
+    "with-query": "^1.0.2"
   },
   "repository": {
     "type": "git",

@@ -6,9 +6,6 @@ from core.api import UserSerializer
 
 
 class FriendshipRequestSerializer(serializers.ModelSerializer):
-    initiator = UserSerializer()
-    recipient = UserSerializer()
-
     class Meta:
         model = FriendshipRequest
         fields = ('initiator', 'recipient', 'approved',)
@@ -32,13 +29,11 @@ class FriendshipRequestViewSet(viewsets.ModelViewSet):
 
 
 class FriendshipSerializer(serializers.ModelSerializer):
-    author = UserSerializer()
     friend = UserSerializer()
 
     class Meta:
         model = Friendship
-        fields = ['author', 'friend', 'created']
-        depth = 2
+        fields = ['friend']
 
 
 class FriendshipViewSet(viewsets.ModelViewSet):
@@ -50,10 +45,16 @@ class FriendshipViewSet(viewsets.ModelViewSet):
     #     serializer.save()
 
     def get_queryset(self):
-        q = super(FriendshipViewSet, self).get_queryset()
-        if self.request.query_params.get('username'):
-            username = self.request.query_params.query_params.get('username')
-            q = q.filter(author__username=username)
+        q = self.queryset
+        username = self.request.query_params.get('username')
+        pk = None
+        if 'pk' in self.kwargs:
+            pk = self.kwargs['pk']
+            q = q.filter(pk=pk)
+        elif username:
+            q = q.filter(username=username)
+        else:
+            q = q.filter(author=self.request.user)
         return q
 
 

@@ -5,12 +5,11 @@ from core.models import User
 from core.api import UserSerializer
 from .permissions import IsOwnerOrReadOnly
 from django.db.models import Q
-from application.settings import AUTH_USER_MODEL
-
-
+from rest_framework.pagination import PageNumberPagination
 
 class MessageSerializer(serializers.HyperlinkedModelSerializer):
     author = serializers.HiddenField(default='author.id')
+
     # chat = ChatSerializer()
     # author = serializers.ReadOnlyField()
 
@@ -27,26 +26,37 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
 
 class ChatSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(source='author.id')
-    #messages = MessageSerializer(many=True, read_only=True)
+    # messages = MessageSerializer(many=True, read_only=True)
+    last_message = serializers.SerializerMethodField('get_message')
 
     class Meta:
         model = Chat
-        fields = ['pk', 'title', 'author', 'created', ]
+        fields = ['pk', 'title', 'author', 'created', 'last_message']
         depth = 1
+
+    def get_message(self, obj):
+        last_message = obj.messages.all().order_by('-created')[0]
+        avatar = None
+        if last_message.author.avatar:
+            avatar = last_message.author.avatar.url
+        return {
+            'author': last_message.author.username,
+            'avatar': avatar,
+            'content': last_message.content,
+        }
 
 
 class UserChatSerializer(serializers.HyperlinkedModelSerializer):
     # user = UserSerializer()
-    #chat = ChatSerializer()
+    # chat = ChatSerializer()
 
     class Meta:
         model = UserChat
         fields = ['chat', 'user']
-        #depth = 1
+        # depth = 1
 
 
 class ChatViewSet(viewsets.ModelViewSet):
-
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
     permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly)
@@ -60,14 +70,14 @@ class ChatViewSet(viewsets.ModelViewSet):
             username = self.request.query_params.get('username')
             # q = q.filter(author__username=self.request.query_params.get('username'))
             q = q.filter(chats__user__username=username)
-            #print(q)
+            # print(q)
         return q
 
 
 class UserChatViewSet(viewsets.ModelViewSet):
     queryset = UserChat.objects.all()
     serializer_class = UserChatSerializer
-    permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
         q = super(UserChatViewSet, self).get_queryset()
@@ -76,21 +86,28 @@ class UserChatViewSet(viewsets.ModelViewSet):
         return q
 
 
+class MessagePagination(PageNumberPagination):
+    page_size = 50
+    page_size_query_param = 'page_size'
+    max_page_size = 200
+
+
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
-    permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = (permissions.IsAuthenticated,)
+    pagination_class = MessagePagination
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
     def get_queryset(self):
+        q = self.queryset.filter(chat__chats__user=self.request.user)
         chat_id = self.request.query_params.get('chat')
         if chat_id:
-            query = Q(chat__chats__user=self.request.user) & Q(chat__id=chat_id)
-        else:
-            query = Q(chat__chats__user=self.request.user)
-        return self.queryset.filter(query)
+            q = q.filter(chat__id=chat_id)
+        return q.prefetch_related('chat')
+
 
 router.register('chats', ChatViewSet)
 router.register('userchats', UserChatViewSet)

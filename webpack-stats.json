@@ -1,1 +1,1 @@
-{"status":"error","publicPath":"../static/","error":"Error","message":"testBundle-81e9ffaa7fee61b5d729.js from UglifyJs\nUnexpected token: name (NavbarLeft) [testBundle-81e9ffaa7fee61b5d729.js:20066,6]"}
+{"status":"done","publicPath":"/static/build/","chunks":{"indexBundle":[{"name":"indexBundle.js","publicPath":"/static/build/indexBundle.js","path":"/home/les/Desktop/Desktop/socialweb/src/static/build/indexBundle.js"}]}}

@@ -1,19 +1,17 @@
 const webpack = require('webpack');
 const BundleTracker = require('webpack-bundle-tracker');
-const path = require('path');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 module.exports = {
   entry: {
-    testBundle: './test',
-    indexBundle: './index',
+    indexBundle: './app',
   },
-  context: path.resolve(__dirname, './static_src'),
+  context: `${__dirname}/static_src`,
   output: {
-    filename: '[name]-[hash].js',
-    path: path.resolve(path.dirname(__dirname), './static'),
-    publicPath: '../static/',
+    path: `${__dirname}/static/build`,
+    filename: '[name].js',
+    publicPath: '/static/build/',
         // library: '[name]'
   },
 
@@ -22,13 +20,13 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        loader: 'babel-loader?presets[]=react&presets[]=es2016&presets[]=stage-0',
+        loader: 'babel-loader?presets[]=react&presets[]=es2015&presets[]=stage-0',
       }, {
         test: /\.css$/,
-        loaders: ['style-loader', 'css-loader'],
+        loaders: 'style-loader!css-loader',
       }, {
         test: /\.scss$/,
-        loaders: ['style-loader', 'css-loader', 'sass-loader?sourceMap'],
+        loaders: 'style-loader!css-loader!sass-loader?sourceMap',
       }, {
         test: /\.(png|jpg|gif|svg|ttf|eot|woff|woff2)$/,
         loader: 'url-loader?limit=4096',
@@ -38,7 +36,7 @@ module.exports = {
 
   resolve: {
     modules: [
-      path.resolve(__dirname, './static_src'),
+      `${__dirname}/static_src`,
       'node_modules',
     ],
     extensions: ['.js', '.jsx'],
@@ -71,6 +69,5 @@ module.exports = {
   ],
 
   devtool: NODE_ENV === 'development'
-      ? 'inline-source-map'
-      : 'cheap-module-inline-source-map',
+      ? 'cheap-module-inline-source-map' : false,
 };

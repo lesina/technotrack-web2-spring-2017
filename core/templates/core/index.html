@@ -1,13 +1,15 @@
+{#{% load static %}#}
 {% load render_bundle from webpack_loader %}
 <!DOCTYPE html>
 <html>
   <head>
-      <meta charset="utf-8">
-      <meta name="viewport">
-      {% render_bundle 'testBundle' 'css' %}
+    <meta charset="utf-8">
+    <meta name="viewport">
+      {% render_bundle 'indexBundle' 'css' %}
   </head>
   <body>
-    <div id="root"></div>
-  {% render_bundle 'testBundle' 'js' %}
+    <div id="root">
+    </div>
+  {% render_bundle 'indexBundle' 'js' %}
   </body>
 </html>
