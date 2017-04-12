@@ -33,9 +33,6 @@ class PostListLayoutComponent extends Component {
       {
         method: 'GET',
         credentials: 'same-origin',
-        body: {
-          format: 'json',
-        },
       })
       .then(promise => promise.json())
       .then((json) => {

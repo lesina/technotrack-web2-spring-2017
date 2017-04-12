@@ -14,6 +14,7 @@ const post = new schema.Entity('posts', {
 
 const func = store => next => (action) => {
   let normalized = {};
+  //console.log(action, action.type);
   switch (action.type) {
     case LOAD_POSTS_SUCCESS:
       normalized = normalize(action.posts, [post]);

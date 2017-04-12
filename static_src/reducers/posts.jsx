@@ -13,6 +13,7 @@ const initialState = {
 };
 
 export default function posts(store = initialState, action) {
+  //console.log(action, action.type);
   switch (action.type) {
     case LOAD_POSTS:
       // return store.set('isLoading', true);
