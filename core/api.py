@@ -47,17 +47,17 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly)
 
-    def get_queryset(self):
-        q = self.queryset
-        username = self.request.query_params.get('username')
-        if 'pk' in self.kwargs:
-            pk = self.kwargs['pk']
-            q = q.filter(pk=pk)
-        elif username:
-            q = q.filter(username=username)
-        else:
-            q = q.filter(pk=self.request.user.pk)
-        return q
+    # def get_queryset(self):
+    #     q = self.queryset
+    #     username = self.request.query_params.get('username')
+    #     if 'pk' in self.kwargs:
+    #         pk = self.kwargs['pk']
+    #         q = q.filter(pk=pk)
+    #     elif username:
+    #         q = q.filter(username=username)
+    #     else:
+    #         q = q.filter(pk=self.request.user.pk)
+    #     return q
 
 
 router.register('users', UserViewSet)

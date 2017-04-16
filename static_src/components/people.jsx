@@ -7,7 +7,7 @@ export default class PeopleComponent extends Component {
       <ListGroupItem bsStyle={this.props.bsStyle}>
         <Media>
           <Media.Left>
-            <img width={64} height={64} src="/assets/thumbnail.png" alt="Image" />
+            <img width={64} height={64} src={'../../static/images/default_avatar.jpg'} />
           </Media.Left>
           <Media.Body>
             <Media.Heading>Username</Media.Heading>

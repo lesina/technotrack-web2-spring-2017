@@ -51,7 +51,7 @@ class FriendsComponent extends Component {
       <div> { (this.props.isLoading & this.props.type === FRIENDSHIPS) ?
         <CircularProgress size={60} thickness={7} /> :
         (listProps.length === 0 & this.props.type === FRIENDSHIPS) ?
-          <h2>You have no friends yet</h2> : listProps
+          <h3>У вас пока нет друзей</h3> : listProps
       }
       </div>
     );

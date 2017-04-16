@@ -10,7 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 
 
 class User(AbstractUser):
-    avatar = models.ImageField(u'фото', blank=True, upload_to='avatars')
+    avatar = models.ImageField(u'фото', blank=True, upload_to='avatars', default='avatars/default_avatar.jpg')
 
     class Meta:
         verbose_name = u'пользователь'
