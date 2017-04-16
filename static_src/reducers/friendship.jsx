@@ -19,10 +19,12 @@ export default function friendship(store = initialState, action) {
             friend => (<FriendComponent key={friend} id={friend} type={action.friendshipType} />),
           );
 
-      let bufStore;
+      let bufStore = store;
       switch (action.friendshipType) {
         case FRIENDSHIPS:
-          bufStore = update(store, { friendsList: { $merge: friends } });
+          if (action.friends.length > 0) {
+            bufStore = update(store, { friendsList: { $merge: friends } });
+          }
           break;
         case FRIENDSHIP_REQUESTS:
           bufStore = update(store, { friendshipRequestList: { $merge: friends } });

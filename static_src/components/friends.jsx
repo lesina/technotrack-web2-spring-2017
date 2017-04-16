@@ -27,7 +27,6 @@ class FriendsComponent extends Component {
   field = '';
 
   render() {
-    console.log(this.props);
     let listProps;
     switch (this.props.type) {
       case FRIENDSHIPS:
@@ -49,8 +48,10 @@ class FriendsComponent extends Component {
     }
 
     return (
-      <div> { this.props.isLoading & this.props.type === FRIENDSHIPS ?
-        <CircularProgress size={60} thickness={7} /> : listProps
+      <div> { (this.props.isLoading & this.props.type === FRIENDSHIPS) ?
+        <CircularProgress size={60} thickness={7} /> :
+        (listProps.length === 0 & this.props.type === FRIENDSHIPS) ?
+          <h2>You have no friends yet</h2> : listProps
       }
       </div>
     );
