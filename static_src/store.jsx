@@ -6,6 +6,7 @@ import initReucers from './reducers/index';
 import { addUser } from './actions/users';
 import { LOAD_POSTS_SUCCESS, loadPostsSuccess } from './actions/posts';
 import { LOAD_FRIENDS_SUCCESS, loadFriendsSuccess } from './actions/friendship';
+import { LOAD_USERS_SUCCESS, loadUsersSuccess } from './actions/people';
 
 const user = new schema.Entity('users');
 const post = new schema.Entity('posts', {
@@ -27,9 +28,18 @@ const func = store => next => (action) => {
     case LOAD_FRIENDS_SUCCESS:
       normalized = normalize(action.friends, [user]);
       store.dispatch(addUser(normalized.entities.users));
+      // console.log(normalized, store);
       return next(loadFriendsSuccess(
         normalized.result,
         action.friendshipType,
+      ));
+
+    case LOAD_USERS_SUCCESS:
+      normalized = normalize(action.users, [user]);
+      store.dispatch(addUser(normalized.entities.users));
+      // console.log(normalized, store);
+      return next(loadUsersSuccess(
+        normalized.result,
       ));
     default:
       return next(action);

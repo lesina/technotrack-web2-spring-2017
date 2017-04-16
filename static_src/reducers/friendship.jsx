@@ -15,10 +15,12 @@ export default function friendship(store = initialState, action) {
     case LOAD_FRIENDS:
       return update(store, { isLoading: { $set: true } });
     case LOAD_FRIENDS_SUCCESS:
+    // console.log(action.friends);
+    // action.friends.map( friend => console.log(friend));
       const friends = action.friends.map(
             friend => (<FriendComponent key={friend} id={friend} type={action.friendshipType} />),
           );
-
+      // console.log(friends);
       let bufStore = store;
       switch (action.friendshipType) {
         case FRIENDSHIPS:
@@ -35,7 +37,7 @@ export default function friendship(store = initialState, action) {
         default:
           bufStore = update(store, { friendsList: { $merge: friends } });
       }
-
+      // console.log(bufStore);
       return update(bufStore, {
         isLoading: { $set: false },
       });

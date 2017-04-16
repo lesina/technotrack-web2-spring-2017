@@ -4,6 +4,7 @@ import layout from './layout';
 import posts from './posts';
 import users from './users';
 import friendship from './friendship';
+import people from './people'
 
 export default combineReducers({
   router,
@@ -11,4 +12,5 @@ export default combineReducers({
   posts,
   users,
   friendship,
+  people,
 });

@@ -9,7 +9,7 @@ const initialState = {
   posts: {},
   postIds: [],
   isLoading: false,
-  postList: [],
+  postList: []
 };
 
 export default function posts(store = initialState, action) {
@@ -22,10 +22,10 @@ export default function posts(store = initialState, action) {
       // return store.set('isLoading', false).merge('list', { [action.post.id]: action.post });
       const x = update(store, {
         posts: {
-          $merge: action.posts,
+          $merge: action.posts
         },
         postIds: {
-          $merge: action.postIds,
+          $merge: action.postIds
         },
       });
 
@@ -34,7 +34,7 @@ export default function posts(store = initialState, action) {
       return update(x, {
         isLoading: { $set: false },
         postList: {
-          $set: list,
+          $set: list
         },
       });
 
@@ -48,7 +48,7 @@ export default function posts(store = initialState, action) {
         posts: {
           [action.id]: {
             modal: {
-              $set: action.option,
+              $set: action.option
             },
           },
         },

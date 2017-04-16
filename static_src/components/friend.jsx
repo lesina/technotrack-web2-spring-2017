@@ -10,6 +10,7 @@ export const FRIENDSHIP_WAITINGS = 'FRIENDSHIP_WAITINGS';
 
 class FriendComponent extends Component {
   render() {
+    // console.log(this.props);
     let bsStyle;
     let BUTTONS;
     switch (this.props.type) {

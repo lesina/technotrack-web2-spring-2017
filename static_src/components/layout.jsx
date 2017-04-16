@@ -11,7 +11,7 @@ import PostListLayoutComponent from './postListLayout';
 import FriendListLayout from './friendList';
 import UserPage from './userPage';
 import ChatsListComponent from './chatsList';
-import PeopleSearchComponent from './peopleSearch';
+import PeopleListLayout from './peopleSearch';
 import { setProfile } from '../actions/account';
 
 class LayoutComponent extends Component {
@@ -44,7 +44,7 @@ class LayoutComponent extends Component {
         break;
       case 'chats': page = <ChatsListComponent />;
         break;
-      case 'people': page = <PeopleSearchComponent />;
+      case 'people': page = <PeopleListLayout />;
         break;
       default:
         page = <PostListLayoutComponent />;
