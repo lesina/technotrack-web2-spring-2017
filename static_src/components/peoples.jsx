@@ -3,24 +3,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import CircularProgress from 'material-ui/CircularProgress';
-import { loadUsers, loadUsersSuccess, loadUsersFail } from '../actions/people';
+import { loadUsers, loadUsersSuccess, loadUsersFail, fetchPeople } from '../actions/people';
 
 class PeoplesComponent extends Component {
 
   componentDidMount() {
-    // console.log("PeoplesComponent componentDidMount");
-    this.props.loadUsers();
-    // console.log(this.props.isLoading);
-    fetch(this.url,
-      {
-        method: 'GET',
-        credentials: 'same-origin',
-      })
-      .then(promise => promise.json())
-      .then((json) => {
-        // console.log(json);
-        this.props.loadUsersSuccess(json);
-      });
+    this.props.fetchPeople(this.url);
   }
 
   url = '';
@@ -54,6 +42,7 @@ const mapDispatchToProps = distpatch => ({
     loadUsers,
     loadUsersSuccess,
     loadUsersFail,
+    fetchPeople,
   }, distpatch),
 });
 

@@ -20,3 +20,20 @@ export function loadUsersFail() {
     type: LOAD_USERS_FAIL,
   };
 }
+
+export function fetchPeople(url) {
+  return function (dispatch) {
+    dispatch(loadUsers());
+    // console.log(this.props.isLoading);
+    fetch(url,
+      {
+        method: 'GET',
+        credentials: 'same-origin',
+      })
+      .then(promise => promise.json())
+      .then((json) => {
+        // console.log(json);
+        dispatch(loadUsersSuccess(json));
+      });
+  };
+}
