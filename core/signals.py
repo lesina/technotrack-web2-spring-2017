@@ -8,7 +8,7 @@ from .tasks import send_activation_email
 def post_save_user_confirmation(instance, created=False, *args, **kwargs):
     if created:
         if not instance.social_auth.exists():
-            AccountValidation.objects.create(user=instance)
+            AccountValidation.objects.get_or_create(user=instance)
             send_activation_email.apply_async([instance.id, ])
         else:
             instance.confirmed = True

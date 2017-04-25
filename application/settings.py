@@ -219,6 +219,7 @@ WEBPACK_LOADER = {
 ADMINS = (
     ('aleksey.lesovoy@phystech.edu', 'Aleksei Lesovoi'),
 )
+
 # E-MAIL settings
 EMAIL_PORT = 1025
 TEMPLATED_EMAIL_BACKEND = 'templated_email.backends.vanilla_django.TemplateBackend'

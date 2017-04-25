@@ -8,7 +8,6 @@ from .models import User
 def send_activation_email(self, user_id):
     try:
         user = User.objects.get(id=user_id)
+        send_mail_to_user('confirmation', 'soNet@admin.ru', user)
     except Exception as exc:
         raise self.retry(exc=exc)
-
-    send_mail_to_user('confirmation', 'soNet@admin.ru', user)

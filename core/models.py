@@ -94,7 +94,6 @@ class AccountValidation(models.Model):
     def __str__(self):
         return self.user.username
 
-    # todo adequate url
     def get_absolute_url(self):
         return 'http://localhost:8080{}'.format(reverse('core:confirmation', kwargs={
             'pk': self.pk,
