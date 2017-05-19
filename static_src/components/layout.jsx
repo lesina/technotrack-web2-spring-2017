@@ -13,7 +13,7 @@ import PostListLayoutComponent from './postListLayout';
 import FriendListLayout from './friendList';
 import UserPage from './userPage';
 import ChatsListComponent from './chatsList';
-import PeopleListLayout from './peopleSearch';
+import PeopleListLayout from './peopleListLayout';
 import { setProfile } from '../actions/account';
 import { history } from '../store';
 

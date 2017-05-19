@@ -2,6 +2,9 @@ from rest_framework import serializers, viewsets, permissions, fields
 from .models import User
 from application.api import router
 from django.db.models import Q
+from core.search_indexes import UserIndex
+from drf_haystack.serializers import HaystackSerializer, HaystackSerializerMixin
+from drf_haystack.viewsets import HaystackViewSet
 
 
 # from .permissions import IsOwnerOrReadOnly
@@ -40,6 +43,11 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     def check_friend(self, obj):
         # print obj.friends.filter(friend=self.context['request'].user)
         return obj.friends.all().filter(author=self.context['request'].user).exists()
+
+
+class UserHaystack(HaystackSerializerMixin, UserSerializer):
+    class Meta(UserSerializer.Meta):
+        search_fields = ('username',)
 
 
 class UserViewSet(viewsets.ModelViewSet):

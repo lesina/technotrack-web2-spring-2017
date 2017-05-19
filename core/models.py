@@ -20,6 +20,13 @@ class User(AbstractUser):
         verbose_name = u'пользователь'
         verbose_name_plural = u'пользователи'
 
+    @models.permalink
+    def get_absolute_url(self):
+        return 'core:user_detail', (), {'pk': self.pk}
+
+    def __str__(self):
+        return self.username
+
 
 class Dated(models.Model):
     created = models.DateTimeField(auto_now_add=True, verbose_name=u'дата создания')
@@ -99,3 +106,14 @@ class AccountValidation(models.Model):
             'pk': self.pk,
             'slug': self.uuid,
         }))
+
+
+class Subscribe(models.Model):
+    user = models.ForeignKey(User, related_name='subscribes', verbose_name='пользователь')
+
+    class Meta:
+        verbose_name = 'подписка'
+        verbose_name_plural = 'подписки'
+
+    def __str__(self):
+        return self.user.username

@@ -32,7 +32,7 @@ export function fetchPeople(url) {
       })
       .then(promise => promise.json())
       .then((json) => {
-        // console.log(json);
+        console.log(json);
         dispatch(loadUsersSuccess(json));
       });
   };

@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import DetailView, UpdateView
+from django.views.generic import DetailView, UpdateView, ListView
 from .models import User, AccountValidation
 from django.views.generic.edit import CreateView
 from django.urls import reverse
@@ -7,6 +7,8 @@ from django.contrib.auth.views import LoginView as BaseLoginView
 from django.utils import timezone
 from .forms import AuthenticationForm, RegistrationForm
 from django.conf import settings
+from haystack.query import SearchQuerySet, AutoQuery
+from django.http import JsonResponse
 import datetime
 
 
@@ -43,6 +45,7 @@ class RegisterView(CreateView):
     def get_success_url(self):
         return reverse(self.success_url)
 
+
 class AccountValidationView(DetailView):
     model = AccountValidation
     template_name = 'core/confirmation.html'
@@ -71,3 +74,40 @@ class LoginView(BaseLoginView):
 
     def __init__(self, **kwargs):
         super(LoginView, self).__init__(**kwargs)
+
+
+class UserListView(ListView):
+    model = User
+    template_name = 'core/user_list.html'
+
+    def get_queryset(self):
+        sqs = SearchQuerySet()
+        sqs = sqs.models(self.model)
+        query = self.request.GET.get('query')
+        if query:
+            sqs = sqs.filter(text=AutoQuery(query))
+        return sqs.load_all()
+
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.is_ajax() or 1 is 1:
+            data = [
+                # 'status': 'ok',
+                # 'results': [
+                    {
+                        'id': x.object.id,
+                        'username': x.object.username,
+                        'first_name': x.object.first_name,
+                        'last_name': x.object.last_name,
+                        # 'avatar': x.object.avatar,
+
+                    }
+                    for x in context['object_list']
+                # ]
+            ]
+            response = JsonResponse(data, safe=False ,**response_kwargs)
+        else:
+            response = super(UserListView, self).render_to_response(
+                context,
+                **response_kwargs
+            )
+        return response

@@ -48,6 +48,10 @@ INSTALLED_APPS = [
     'social.apps.django_app.default',
     'webpack_loader',
     'templated_email',
+    'haystack',
+    'drf_haystack',
+    'adjacent',
+    'django_celery_beat',
     'generic_relations',
     'widget_tweaks',
     'debug_toolbar',
@@ -107,6 +111,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
+                'adjacent.context_processors.main',
             ],
         },
     },
@@ -158,7 +163,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -232,3 +237,69 @@ CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 CELERY_TASK_SERIALIZER = 'json'
+
+
+# Haystack
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        # 'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        # 'PATH': os.path.join(os.path.dirname(__file__), 'whoosh_index'),
+        # 'URL': 'http://127.0.0.1:9200/',
+        # 'INDEX_NAME': 'haystack',
+        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+        'PATH': os.path.join(os.path.dirname(__file__), 'whoosh_index'),
+    },
+}
+
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
+ELASTYCSEARCH_INDEX_SETTINGS = {
+    'settings': {
+        "analysis": {
+            "synonym_analyzer": {
+                "type": "custom",
+                "filter": ["synonym"],
+                "tokenizer": "standard"
+            },
+            "ngram_analyzer": {
+                "type": "custom",
+                "tokenizer": "lowercase",
+                "filter": ["haystack_ngram", "synonym"]
+            },
+            "edgengram_analyzer": {
+                "type": "custom",
+                "tokenizer": "lowercase",
+                "filter": ["haystack_edgengram"]
+            }
+        },
+        "tokenizer": {
+            "haystack_ngram_tokenizer": {
+                "type": "nGram",
+                "min_gram": 3,
+                "max_gram": 15,
+            },
+            "haystack_edgengram_tokenizer": {
+                "type": "edgeNGram",
+                "min_gram": 2,
+                "max_gram": 15,
+                "side": "front",
+            }
+        },
+        "filter": {
+            "haystack_ngram": {
+                "type": "nGram",
+                "min_gram": 3,
+                "max_gram": 15
+            },
+            "haystack_edgengram": {
+                "type": "edgeNGram",
+                "min_gram": 2,
+                "max_gram": 15,
+            }
+        }
+    }
+}
+
+CENTRIFUGE_ADDRESS = 'http://0.0.0.0:8081'
+CENTRIFUGE_SECRET = 'f276ea59-7891-4d87-b7ed-9b1e31f1bfe3'
+CENTRIFUGE_TIMEOUT = 10
